@@ -1,0 +1,11 @@
+/* This is a hello world program with a comment */
+`/sys/out` ! /* and here is another comment */ (
+  "Hello, " + /* and here are more comments 
+  in the midst of expressions 
+  going over multiple lines
+  */
+  "World!"
+) /*
+  and here are some /* confusing /* //* forward slashes
+  going over multiple lines
+*/

@@ -1,0 +1,10 @@
+public `print_twice`: Run[String]
+
+contract `print_twice`(message) {
+  `/sys/out` ! (message) |
+  `/sys/out` ! (message)
+}
+
+`print_twice`("Hello")
+`print_twice`("Hi")
+`print_twice`("Guten Tag.")

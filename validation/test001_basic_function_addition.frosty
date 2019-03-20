@@ -1,0 +1,42 @@
+/** Tests packages, imports, function definitions, basic arithmetic, string
+  * concatenation.
+  *
+  * DON'T_EXPECT: "Hello, world!\n100\nHello, everyone!"
+  * 
+  * Goddamn asynchronous `/sys/out` is freaking me out.
+  */
+
+public package `foo` {
+  public `f`: Fun[Int, Int, Int]
+  function `f`(x, y) = x + y
+
+  public package `bar` {
+    public `greet`: Fun[String, String]
+    function `greet`(name) = "Hello, " + name + "!"
+  }
+}
+
+import `/foo/*`
+import `bar/greet`
+
+new 
+  flag1: Chan[Unit],
+  flag2: Chan[Unit],
+  flag3: Chan[Unit]
+{
+  flag1 ! (())
+  |
+  flag1 ? (_u) {
+    flag2 !({ `/sys/out`!("Hello, World!\n") | () })
+  }
+  |
+  flag2 ? (_u) {
+    flag3 !({
+      `/sys/out`!(`/lang/int_to_string`(`foo/f`(48, 52))) | () 
+    })
+  } 
+  |
+  flag3 ? (_u) {
+    `/sys/out`!(`greet`("everyone"))
+  }
+}

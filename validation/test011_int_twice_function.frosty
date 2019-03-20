@@ -1,0 +1,4 @@
+public `twice`: Fun[Int, Int]
+function `twice`(x) = x + x
+
+`/sys/out` ! (`/lang/int_to_string`(`twice`(21)))

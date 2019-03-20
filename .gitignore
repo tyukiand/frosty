@@ -1,0 +1,12 @@
+*.sublime-workspace
+*.sublime-project
+frostyc/project/project/
+frostyc/project/target/
+frostyc/target/
+frostyvm/Cargo.lock
+frostyc/*.sh
+validation/target/
+sloc
+pocs
+cruft 
+*.procs

@@ -1,0 +1,1 @@
+`/sys/out` ! ("catch " + `/lang/int_to_string`(33))

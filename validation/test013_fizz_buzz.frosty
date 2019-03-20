@@ -1,0 +1,16 @@
+public `fizzBuzz`: Run[Int]
+contract `fizzBuzz`(n) {
+  if (n % 3) == 0
+  then if (n % 5) == 0 
+    then `/sys/out` ! ("FizzBuzz")
+    else `/sys/out` ! ("Fizz")
+  else if (n % 5) == 0
+  then `/sys/out` ! ("Buzz")
+  else `/sys/out` ! (`/lang/int_to_string`(n)) |
+
+  if n == 100 
+  then {} 
+  else `fizzBuzz`(n + 1)
+}
+
+`fizzBuzz`(1)

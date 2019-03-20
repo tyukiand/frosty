@@ -1,0 +1,7 @@
+/** EXPECT: "it works" */
+new x: Chan[String] {
+  `/sys/out` ! ({
+    x ! ("it works") |
+    await x
+  })
+}

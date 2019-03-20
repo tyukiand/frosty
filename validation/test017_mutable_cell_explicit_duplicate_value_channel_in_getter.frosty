@@ -1,0 +1,53 @@
+public `cell`: Run[Int, Chan[Fun[Unit, Int]], Chan[Fun[Int, Unit]]]
+contract `cell`(initialValue, retGet, retSet) {
+  new
+    valueChannel: Chan[Int],
+    getter: Fun[Unit, Int],
+    setter: Fun[Int, Unit]
+  {
+    valueChannel ! (initialValue) |
+    function setter(newValue) = {
+      valueChannel ? (_discardOldValue) {
+        valueChannel ! (newValue)
+      } |
+      ()
+    } |
+    retSet ! (setter) |
+    function getter(_ignored) = {
+      new x: Chan[Int] {
+        valueChannel ? (curr) {
+          valueChannel ! (curr) |
+          x ! (curr)
+        } |
+        await x
+      }
+    } |
+    retGet ! (getter)
+  }
+}
+
+public `increase_cell_value_by_amount`: Fun[
+  Fun[Unit, Int],
+  Fun[Int, Unit],
+  Int,
+  Unit
+]
+
+function `increase_cell_value_by_amount`(get, set, amount) = {
+  set(get(()) + amount)
+}
+
+new
+  retGet: Chan[Fun[Unit, Int]],
+  retSet: Chan[Fun[Int, Unit]]
+{
+  `cell`(35, retGet, retSet) |
+
+  retGet ? (getter) {
+    retSet ? (setter) {
+      `/sys/out` ! (`/lang/int_to_string`(getter(
+        `increase_cell_value_by_amount`(getter, setter, 7))
+      ))
+    }
+  }
+}

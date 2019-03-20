@@ -1,0 +1,13 @@
+public package `foo` {
+  public `out`: Chan[String, String, String, String, String]
+  public `f`: Chan[
+    String, String, String,
+    Chan[String, String, String, String, String]
+  ]
+}
+
+`foo/f` ? (h, w, r, o) {
+  o ! (h, w, r, r, r)
+}
+
+`foo/f` ! ("Hello, ", "World! ", "It works!", `foo/out`)

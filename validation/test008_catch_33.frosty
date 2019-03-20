@@ -1,0 +1,6 @@
+`/sys/out` ! (
+  `/lang/concat_string`(
+    "Catch ",
+    `/lang/int_to_string`((42 + 57) / 3)
+  )
+)

@@ -1,0 +1,13 @@
+/** A reduced version of "99 bottles of beer on the wall".
+  *
+  * EXPECT: "5;4;3;2;1;end"
+  */
+
+public `sing_song`: Run[Int]
+contract `sing_song`(n) {
+  if n == 0 
+  then `/sys/out` ! ("end\n")
+  else `sing_song`({ `/sys/out` ! (`/lang/int_to_string`(n) + ";") | n - 1 })
+}
+
+`sing_song`(5)

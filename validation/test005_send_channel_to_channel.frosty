@@ -1,0 +1,10 @@
+public package `my` {
+  public `strChan`: Chan[String]
+  public `chanChan`: Chan[Chan[String], String]
+}
+
+`my/chanChan` ! (`my/strChan`, "This should end up on strChan")
+
+`my/chanChan` ? (c, msg) {
+  c ! (msg)
+}

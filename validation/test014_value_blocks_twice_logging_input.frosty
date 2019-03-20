@@ -1,0 +1,12 @@
+/** Value blocks with a side-effect in the process part.
+  * 
+  * EXPECT: "log:21;42"
+  */
+
+public `twice`: Fun[Int, Int]
+function `twice`(x) = {
+  `/sys/out` ! ("log:" + `/lang/int_to_string`(x) + ";") |
+  x + x
+}
+
+`/sys/out` ! (`/lang/int_to_string`(`twice`(21)))

@@ -1,0 +1,6 @@
+/** Nested function calls, binary `and` operator, booleans.
+  *
+  * EXPECT: "true"
+  */
+
+`/sys/out` ! (`/lang/boolean_to_string`((true and true) and true))

@@ -1,0 +1,10 @@
+/** Unfreezes a frozen process twice. Should result in two copies of same
+  * process running in parallel.
+  *
+  * EXPECT: "heyhey"
+  */
+
+new runTwice: Chan[Proc] {
+  runTwice ! (#(`/sys/out` ! ("hey"))) |
+  runTwice ? (p) { ~p | ~p }
+}

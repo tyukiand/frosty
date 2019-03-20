@@ -1,0 +1,42 @@
+/** Tests package declarations, wildcard imports, renaming imports.
+  *
+  * EXPECT: "ABC\n"
+  */
+
+public package `some` {
+  public `channel`: Chan[String]
+}
+
+
+`flag_1` ? (_u) {
+  `some/channel` ! ("A")
+}
+
+
+import `some/*` 
+`flag_2` ? (_u) {
+  `channel` ! ("B")
+}
+
+import `some/{channel => ch}`
+`flag_3` ? (_u) {
+  `ch` ! ("C\n")
+}
+
+/** Everything below is just for enforcing the order */
+public `flag_1`: Chan[Unit]
+public `flag_2`: Chan[Unit]
+public `flag_3`: Chan[Unit]
+
+`flag_1` ! ( () )
+`some/channel` ? (a) {
+  `/sys/out` ! (a) |
+  `flag_2` ! ( () ) |
+  `some/channel` ? (b) {
+    `/sys/out` ! (b) |
+    `flag_3` ! ( () ) |
+    `some/channel` ? (c) {
+      `/sys/out` ! (c)
+    }
+  }
+}
