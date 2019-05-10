@@ -23,7 +23,7 @@ Tested locally on x86_64 GNU/Linux
   * `rustc version: rustc 1.33.0 (2aa4c46cf 2019-02-28)
 `
 
-Readme generated on 2019-04-01.
+Readme generated on 2019-05-10.
 
 ## What's in this Repository?
 
@@ -42,9 +42,10 @@ programming language based on process calculus.
 with some support for statically typed functional programming built on top
 of it. The implementation currently consists of a compiler `frostyc` implemented
 in Scala and a very simple virtual machine `frostyvm` written in Rust.
-The language itself is mostly inspired by 
+The main goal of the project is to gain a better understanding of
+programming languages based on process calculi, such as
 [Rholang](https://github.com/rchain/rchain/tree/master/rholang) and
-[Pict](https://en.wikipedia.org/wiki/Pict_(programming_language), some
+[Pict](https://en.wikipedia.org/wiki/Pict_(programming_language). Some
 terminology is obviously borrowed from Rholang.
 
 Main goals of this experiment are:
@@ -59,7 +60,7 @@ Main goals of this experiment are:
     based on process-calculi instead of the more common λ-calculus.
 
 Below, we briefly describe some things that already work, but before we do
-that, here is a list of things that *don't work* (yet):
+that, here is a list of things that *don't work* (at least not yet):
 
   1. There is currently no way to introduce user-defined data structures.
     (`data` / `trait` systems are work in progress, and all the other
