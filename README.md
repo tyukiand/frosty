@@ -45,7 +45,7 @@ in Scala and a very simple virtual machine `frostyvm` written in Rust.
 The main goal of the project is to gain a better understanding of
 programming languages based on process calculi, such as
 [Rholang](https://github.com/rchain/rchain/tree/master/rholang) and
-[Pict](https://en.wikipedia.org/wiki/Pict_(programming_language). Some
+[Pict](https://en.wikipedia.org/wiki/Pict_(programming_language)). Some
 terminology is obviously borrowed from Rholang.
 
 Main goals of this experiment are:
