@@ -1,0 +1,11 @@
+/** Prints `yes` three times by process freezing / unfreezing.
+  *
+  * EXPECTED: "Yes!\nYes!\nYes!\n"
+  */
+
+/** CROP-HEADER */
+new c: Chan[Proc] {
+  c ? (p) { ~p | ~p | ~p } |
+  c ! (#(`/sys/out` ! ("Yes!\n")))
+}
+

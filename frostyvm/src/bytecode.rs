@@ -166,7 +166,7 @@ fn read_value_rec<R: Read>(
         EQ_I => Ok(BuiltInChannelName(EqI)),
         LE_I => Ok(BuiltInChannelName(LeI)),
         LEQ_I => Ok(BuiltInChannelName(LeqI)),
-        GE_I => Ok(BuiltInChannelName(GeI)),
+        GR_I => Ok(BuiltInChannelName(GrI)),
         GEQ_I => Ok(BuiltInChannelName(GeqI)),
         ADD_I => Ok(BuiltInChannelName(AddI)),
         NEG_I => Ok(BuiltInChannelName(NegI)),

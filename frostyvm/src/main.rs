@@ -98,3 +98,4 @@ fn main() {
         Err(e) => println!("Corrupt input file, failed to load: {}", e),
     }
 }
+

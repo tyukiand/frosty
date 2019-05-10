@@ -28,12 +28,7 @@ assemblyJarName in assembly := "frostyc.jar"
 
 
 
-
-
-
-
-
-// Generates scala multiple source code files from `../bytecode_format.rs`.
+// Generates bunch of .scala source code files from `../bytecode_format.rs`.
 sourceGenerators in Compile += Def.task{
   val OpcodeTableRustPath = "../bytecode_format.rs"
   val tableFile = file(OpcodeTableRustPath)
@@ -284,3 +279,144 @@ sourceGenerators in Compile += Def.task{
 
   cachedFun(Set(tableFile)).toSeq
 }.taskValue
+
+
+// Builds `README.md` in the parent directory, using test coverage data provided
+// by Scoverage. 
+lazy val generateReadme = taskKey[Unit]("generates readme with coverage badges")
+generateReadme := {
+  val readmeSrc = IO.read(file("../readmesrc/README.md"))
+
+  /** URL for parameterized Shields.io badge */
+  def shieldUrl(label: String, message: String, color: String): String = {
+   s"""https://img.shields.io/static/v1.svg?""" +
+   s"""label=${label}&message=${message}&color=${color}"""
+  }
+  
+  /** URL embedded in Markdown */
+  def shieldMd(label: String, message: String, color: String): String = {
+    s""" ![${label}: ${message}](${shieldUrl(label, message, color)})"""
+  }
+
+  /** Badge for numeric values with red-yellow-green colors */
+  def shieldMdThresh(
+    label: String,
+    value: Double,
+    yellowThresh: Double,
+    greenThresh: Double
+  ): String = {
+    val color = 
+      if (value >= greenThresh) "green" else
+      if (value >= yellowThresh) "yellow" else
+      if (value > 0) "orange" else
+      "red"
+    shieldMd(label, value.toString, color)
+  }
+
+  val buildSuccessful = (compile in Compile).result.value match {
+    case Value(_) => true
+    case _ => false
+  }
+
+  val buildBadge = if (buildSuccessful) {
+    shieldMd("local-scala-build", "passing", "green")
+  } else {
+    shieldMd("local-scala-build", "failing", "red")
+  }
+
+  val testsSuccessful = (test in Test).result.value match {
+    case Value(_) => true
+    case _ => false
+  }
+
+  val testBadge = if (testsSuccessful) {
+    shieldMd("local-scala-tests", "passing", "green")
+  } else {
+    shieldMd("local-scala-tests", "failing", "red")
+  }
+
+  val sbtVers = sbtVersion.value
+  val scalVers = scalaVersion.value
+  val cargoVers = "cargo --version".!!
+  val rustcVers = "rustc --version".!!
+
+  import scala.sys.process._
+  val rustBase = file("../frostyvm")
+  val cargoBuildSuccessful = Process(Seq("cargo", "build"), rustBase).! == 0
+  val cargoTestSuccessful = Process(Seq("cargo", "test"), rustBase).! == 0
+
+  val cargoBuildBadge = if (cargoBuildSuccessful) {
+    shieldMd("local-rust-build", "passing", "green")
+  } else {
+    shieldMd("local-rust-build", "failing", "red")
+  }
+
+  val cargoTestBadge = if (cargoTestSuccessful) {
+    shieldMd("local-rust-test", "passing", "green")
+  } else {
+    shieldMd("local-rust-test", "failing", "red")
+  }
+
+  import java.time.ZonedDateTime
+  import java.time.format.DateTimeFormatter._
+
+  val now = java.time.ZonedDateTime.now.format(ISO_LOCAL_DATE)
+
+  import scala.sys.process._
+  val systemDescription = "uname -o -p".!!
+  
+  val environmentInfo = 
+    s"""Tested locally on ${systemDescription} with""" + "\n\n" +
+    s"""  * `scalaVersion = ${scalVers}`""" + "\n" +
+    s"""  * `sbtVersion = ${sbtVers}`""" + "\n" +
+    s"""  * `cargo version: ${cargoVers}`""" + "\n" +
+    s"""  * `rustc version: ${rustcVers}`""" + "\n" +
+    "\n" +
+    s"""Readme generated on ${now}."""
+
+  import scala.xml.XML
+  val f = file("target/scala-2.12/scoverage-report/scoverage.xml")
+  val coverageBadges =
+    (if (f.exists) {
+      val report = XML.loadFile(f)
+      val branchCov = report.attribute("branch-rate").get.text.toDouble
+      val stmtCov = report.attribute("statement-rate").get.text.toDouble
+
+      shieldMdThresh("statement-coverage", stmtCov, 50, 90) + " " +
+      shieldMdThresh("branch-coverage", branchCov, 50, 90)
+    } else {
+      shieldMd("coverage", "unavailable", "red")
+    })
+
+  val scalaBadges =
+    shieldMd("version", version.value, "lightgrey") +
+    buildBadge +
+    testBadge +
+    coverageBadges
+
+  val rustBadges =
+    cargoBuildBadge +
+    cargoTestBadge
+
+  val readmeWithBadges = readmeSrc
+    .replaceAll("<SCALA-BADGES>", scalaBadges)
+    .replaceAll("<RUST-BADGES>", rustBadges)
+    .replaceAll("<ENVIRONMENT-INFO>", environmentInfo)
+
+  val FileSnippetRegex = "( *)<FILE:(.*)>".r
+
+  val readmeWithSnippets = FileSnippetRegex.replaceAllIn(
+    readmeWithBadges,
+    m => {
+      val indentation = m.group(1)
+      val lines = io.Source.fromFile("../" + m.group(2)).getLines.toList
+      val codeLines = if (lines.exists(_.contains("CROP-HEADER"))) {
+        lines.dropWhile(l => !l.contains("CROP-HEADER")).tail
+      } else lines
+      codeLines.map(indentation.+).mkString("\n")
+    }
+  )
+
+  IO.write(file("../README.md"), readmeWithSnippets)
+}
+

@@ -1,0 +1,23 @@
+/** Contract declaration
+  *
+  * EXPECTED: "blahblahblahblahblah"
+  */
+
+/** CROP-HEADER */
+public `repeat`: Run[Int, Run[Unit]]
+
+contract `repeat`(times, action) {
+  if times == 0
+  then {}
+  else {
+    action(()) |
+    `repeat`(times - 1, action)
+  }
+}
+
+new a: Run[Unit] {
+  contract a(_ignoredUnitValue) {
+    `/sys/out` ! ("blah")
+  } |
+  `repeat`(5, a)
+}

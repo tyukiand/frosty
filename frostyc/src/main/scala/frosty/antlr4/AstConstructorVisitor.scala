@@ -79,7 +79,7 @@ extends FrostyBaseVisitor[VisitResult] {
   override def visitOr(c: OrContext): VisitResult = {
     val VisitProc(a) = visit(c.proc(0))
     val VisitProc(b) = visit(c.proc(1))
-    proc(c, And(a, b))
+    proc(c, Or(a, b))
   }
   override def visitNewProc(c: NewProcContext): VisitResult = {
     val VisitNameTypes(newNamesTypes) = visit(c.nametypelist)
@@ -111,6 +111,19 @@ extends FrostyBaseVisitor[VisitResult] {
     val VisitProc(b) = visit(c.proc(1))
     if (c.op.getType == ADD) proc(c, Add(a, b))
     else proc(c, Sub(a, b))
+  }
+  override def visitComparison(c: ComparisonContext): VisitResult = {
+    val VisitProc(a) = visit(c.proc(0))
+    val VisitProc(b) = visit(c.proc(1))
+    if (c.op.getType == LE) proc(c, Le(a, b))
+    else if (c.op.getType == LEQ) proc(c, Leq(a, b))
+    else if (c.op.getType == GEQ) proc(c, Geq(a, b))
+    else if (c.op.getType == GR) proc(c, Gr(a, b))
+    else throw new Error(
+      "Internal compiler error: unexpected comparison operator " + 
+      c.op.getType +
+      " (probably caused by recent grammar changes)."
+    )
   }
   override def visitParens(c: ParensContext): VisitResult = visit(c.proc)
   override def visitFreeze(c: FreezeContext): VisitResult = {
@@ -336,8 +349,10 @@ extends FrostyBaseVisitor[VisitResult] {
   }
   override def visitUnderImport(ctx: UnderImportContext): VisitResult = {
     val VisitImportAst(i) = visit(ctx.importClause)
-    val VisitNamespaceAst(n) = visit(ctx.nsAst)
-    VisitNamespaceAst(UnderImport(i, n))
+    val content = ctx.nsAst.asScala.toList.map(visit).collect {
+      case VisitNamespaceAst(n) => n
+    }
+    VisitNamespaceAst(UnderImport(i, content))
   }
   override def visitVisibilityModifier(ctx: VisibilityModifierContext)
   : VisitResult = {
@@ -351,4 +366,4 @@ extends FrostyBaseVisitor[VisitResult] {
       }
     )
   }
-}
+} 

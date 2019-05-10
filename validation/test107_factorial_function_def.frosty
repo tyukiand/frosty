@@ -1,0 +1,11 @@
+/** Defines and uses a function.
+  *
+  * EXPECTED: "5040\n"
+  */
+
+/** CROP-HEADER */
+
+public `factorial`: Fun[Int, Int]
+function `factorial`(n) = if (n == 0) then 1 else (n * `factorial`(n - 1))
+
+`/sys/out` ! (`/lang/int_to_string`(`factorial`(7)))

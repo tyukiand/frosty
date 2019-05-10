@@ -1,0 +1,7 @@
+/** Invokes `int_to_string` function.
+  *
+  * EXPECTED: "12345\n"
+  */
+
+/** CROP-HEADER */
+`/sys/out` ! (`/lang/int_to_string`(12345) + "\n")

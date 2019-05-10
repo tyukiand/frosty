@@ -46,9 +46,10 @@ case class ImportAbsAst(
   position: Position
 ) extends ImportAst
 
-case class UnderImport[A, D](i: ImportAst, content: NamespaceAst[A, D])
-  extends NamespaceAst[A, D] {
-
+case class UnderImport[A, D](
+  i: ImportAst,
+  content: List[NamespaceAst[A, D]]
+) extends NamespaceAst[A, D] {
   def position: Position = i.position
 }
 

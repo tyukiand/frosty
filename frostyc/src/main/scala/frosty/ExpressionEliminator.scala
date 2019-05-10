@@ -130,6 +130,20 @@ object ExpressionEliminator extends BackendPhase[List[Rich], List[Core]] (
 
   */
 
+  private def unop
+    (nameHint: String, builtInChannel: builtin.BuiltInChannel)
+    (a: ExprContinuation)
+  : ExprContinuation = { resultReturnChannel => 
+    materializeClosures(for {
+      vA <- returning(nameHint)(a)
+    } yield {
+      mkCore(Tell(
+        mkCore(BuiltInChannelName(builtInChannel)),
+        List(vA, resultReturnChannel)
+      ))
+    })
+  }
+
   private def transformExpr(e: Expr[Core, ExprContinuation])
   : ExprContinuation = {
     // CS-XVIp108
@@ -143,13 +157,23 @@ object ExpressionEliminator extends BackendPhase[List[Rich], List[Core]] (
         })
       }
       case AndB(a, b) => binop("and_b", builtin.AndB)(a, b)
+      case OrB(a, b) => binop("or_b", builtin.OrB)(a, b)
+      case NotB(a) => unop("not_b", builtin.NotB)(a)
+      case EqB(a, b) => binop("eq_b", builtin.EqB)(a, b)
+      case EqU(a, b) => binop("eq_u", builtin.EqU)(a, b)
       case AddI(a, b) => binop("add_i", builtin.AddI)(a, b)
       case SubI(a, b) => binop("sub_i", builtin.SubI)(a, b)
       case MulI(a, b) => binop("mul_i", builtin.MulI)(a, b)
       case DivI(a, b) => binop("div_i", builtin.DivI)(a, b)
       case RemI(a, b) => binop("rem_i", builtin.RemI)(a, b)
+      case NegI(a) => unop("neg_i", builtin.NegI)(a)
       case EqI(a, b) => binop("eq_i", builtin.EqI)(a, b)
+      case LeI(a, b) => binop("le_i", builtin.LeI)(a, b)
+      case LeqI(a, b) => binop("leq_i", builtin.LeqI)(a, b)
+      case GrI(a, b) => binop("gr_i", builtin.GrI)(a, b)
+      case GeqI(a, b) => binop("geq_i", builtin.GeqI)(a, b)
       case ConcatS(a, b) => binop("concat_s", builtin.ConcatS)(a, b)
+      case EqS(a, b) => binop("eq_s", builtin.EqS)(a, b)
 
       case ValueBlock(procs, value) => { resultReturnChannel =>
         mkCore(Parallel(value(resultReturnChannel) :: procs))
@@ -180,11 +204,31 @@ object ExpressionEliminator extends BackendPhase[List[Rich], List[Core]] (
         )
       }
       
+      case IfElseE(cond, thn, els) => { resultReturnChannel => 
+        // CS-XVIp129, hey, that was simple, even after one-month pause! Neat.
+        materializeClosures(
+          for {
+            c <- returning("rch_cond")(cond)
+          } yield {
+            mkCore(Tell(
+              mkCore(BuiltInChannelName(builtin.If)),
+              List(
+                c,
+                mkCore(Freeze(thn(resultReturnChannel))),
+                mkCore(Freeze(els(resultReturnChannel)))
+              )
+            ))
+          }
+        )
+      }
+
       case sthElse => {
         System.err.println(
           "ExprElim: No implementation available yet for expression " + e
         )
-        ???
+        throw new NotImplementedError(
+          "ExpressionEliminator failed to handle " + e
+        )
       }
     }
   }

@@ -4,9 +4,11 @@ frostyc/project/project/
 frostyc/project/target/
 frostyc/target/
 frostyvm/Cargo.lock
+frostyvm/target
 frostyc/*.sh
 validation/target/
 sloc
 pocs
 cruft 
 *.procs
+readme.html

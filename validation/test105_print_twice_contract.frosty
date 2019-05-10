@@ -1,0 +1,17 @@
+/** Prints messages using a `println_twice` contract.
+  *
+  * EXPECTED: "Blah\nBlah\nBlah\nBlah\n"
+  */
+
+/** CROP-HEADER */
+public `println_twice`: Run[String]
+
+/** Redirects two copies of every incoming message to `/sys/out`. */
+contract `println_twice`(msg) {
+  `/sys/out` ! (msg + "\n") |
+  `/sys/out` ! (msg + "\n")
+}
+
+`println_twice`("Blah")
+`println_twice`("Blah")
+

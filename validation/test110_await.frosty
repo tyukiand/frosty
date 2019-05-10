@@ -1,0 +1,10 @@
+/** Await keyword.
+  *
+  * EXPECTED: "Hi\n"
+  */
+
+/** CROP-HEADER */
+new c: Chan[String] {
+  c ! ("Hi") |
+  `/sys/out` ! ((await c) + "\n")
+}

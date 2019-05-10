@@ -16,7 +16,7 @@ pub enum BuiltInChannel {
     EqI,
     LeI,
     LeqI,
-    GeI,
+    GrI,
     GeqI,
     AddI,
     NegI,
@@ -203,7 +203,7 @@ impl BuiltInChannel {
             EqI => copy_binop!(EqI, ms, I, B, ==),
             LeI => copy_binop!(LeI, ms, I, B, <),
             LeqI => copy_binop!(LeqI, ms, I, B, <=),
-            GeI => copy_binop!(GeI, ms, I, B, >),
+            GrI => copy_binop!(GrI, ms, I, B, >),
             GeqI => copy_binop!(GeqI, ms, I, B, >=),
             IToS => {
                 check_arity!(IToS, 2, &ms);
@@ -329,7 +329,7 @@ impl From<&BuiltInChannel> for PrettyPrintable {
             EqI => atom!("<eq_i>"),
             LeI => atom!("<le_i>"),
             LeqI => atom!("<leq_i>"),
-            GeI => atom!("<ge_i>"),
+            GrI => atom!("<ge_i>"),
             GeqI => atom!("<geq_i>"),
             AddI => atom!("<add_i>"),
             SubI => atom!("<sub_i>"),

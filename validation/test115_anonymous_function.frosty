@@ -1,0 +1,10 @@
+/** Anonymous expressions of function type.
+  *
+  * EXPECTED: "1764"
+  */
+
+/** CROP-HEADER */
+`/sys/out` ! (`/lang/int_to_string`(
+  (new f: Fun[Int, Int] { function f(x) = x * x | f })
+  (42)
+))

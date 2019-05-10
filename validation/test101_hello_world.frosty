@@ -1,0 +1,8 @@
+/** The canonical Hello-World
+  *
+  * EXPECTED: "Hello, World!\n"
+  */
+
+/** CROP-HEADER */
+`/sys/out` ! ("Hello, World!\n")
+

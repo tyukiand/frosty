@@ -104,7 +104,7 @@ channel_name!(B_TO_S, 56, "/lang/boolean_to_string", {Fun[Boolean, String]});
 channel_name!(EQ_I, 64, "/lang/eq_int", {Fun[Int, Int, Boolean]});
 channel_name!(LE_I, 65, "/lang/le_int", {Fun[Int, Int, Boolean]});
 channel_name!(LEQ_I, 66, "/lang/leq_int", {Fun[Int, Int, Boolean]});
-channel_name!(GE_I, 67, "/lang/ge_int", {Fun[Int, Int, Boolean]});
+channel_name!(GR_I, 67, "/lang/gr_int", {Fun[Int, Int, Boolean]});
 channel_name!(GEQ_I, 68, "/lang/geq_int", {Fun[Int, Int, Boolean]});
 channel_name!(I_TO_S, 69, "/lang/int_to_string", {Fun[Int, String]});
 // 70

@@ -56,6 +56,10 @@ case class Neg[+P](a: P)                                 extends AstC[P, *]
 case class S(s: String)                                  extends AstC[*, *]
 case class Freeze[+P](proc: P)                           extends AstC[P, *]
 case class Unfreeze[+P](proc: P)                         extends AstC[P, *]
+case class Gr[+P](a: P, b: P)                            extends AstC[P, *]
+case class Geq[+P](a: P, b: P)                           extends AstC[P, *]
+case class Le[+P](a: P, b: P)                            extends AstC[P, *]
+case class Leq[+P](a: P, b: P)                           extends AstC[P, *]
 
 object AstC {
   
@@ -91,6 +95,10 @@ object AstC {
       case Div(a, b) => Div(f(a), f(b))
       case Rem(a, b) => Rem(f(a), f(b))
       case Neg(a) => Neg(f(a))
+      case Gr(a, b) => Gr(f(a), f(b))
+      case Geq(a, b) => Geq(f(a), f(b))
+      case Le(a, b) => Le(f(a), f(b))
+      case Leq(a, b) => Leq(f(a), f(b))
       case s @ S(_) => s
       case Freeze(p) => Freeze(f(p))
       case Unfreeze(p) => Unfreeze(f(p))
@@ -128,6 +136,10 @@ object AstC {
       case Div(a, b) => (f(a), f(b)) mapN Div.apply
       case Rem(a, b) => (f(a), f(b)) mapN Rem.apply
       case Neg(a) => f(a) map Neg.apply
+      case Gr(a, b) =>  (f(a), f(b)) mapN Gr.apply
+      case Geq(a, b) => (f(a), f(b)) mapN Geq.apply
+      case Le(a, b) =>  (f(a), f(b)) mapN Le.apply
+      case Leq(a, b) => (f(a), f(b)) mapN Leq.apply
       case s @ S(_) => (s: AstC[C, D]).pure[G]
       case Freeze(p) => f(p) map Freeze.apply
       case Unfreeze(p) => f(p) map Unfreeze.apply

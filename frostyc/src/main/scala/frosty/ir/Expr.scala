@@ -20,6 +20,10 @@ case class MulI[N](a: N, b: N)                                extends Expr[*, N]
 case class DivI[N](a: N, b: N)                                extends Expr[*, N]
 case class RemI[N](a: N, b: N)                                extends Expr[*, N]
 case class NegI[N](a: N)                                      extends Expr[*, N]
+case class GrI[N](a: N, b: N)                                 extends Expr[*, N]
+case class GeqI[N](a: N, b: N)                                extends Expr[*, N]
+case class LeI[N](a: N, b: N)                                 extends Expr[*, N]
+case class LeqI[N](a: N, b: N)                                extends Expr[*, N]
 case class ConcatS[N](a: N, b: N)                             extends Expr[*, N]
 case class IfElseE[N](c: N, t: N, e: N)                       extends Expr[*, N]
 case class ValueBlock[P, N](proc: List[P], value: N)          extends Expr[P, N]
@@ -47,6 +51,10 @@ object Expr {
         case DivI(a, b) => DivI(g(a), g(b))
         case RemI(a, b) => RemI(g(a), g(b))
         case NegI(a) => NegI(g(a))
+        case GeqI(a, b) => GeqI(g(a), g(b))
+        case GrI (a, b) => GrI (g(a), g(b))
+        case LeqI(a, b) => LeqI(g(a), g(b))
+        case LeI (a, b) => LeI (g(a), g(b))
         case ConcatS(a, b) => ConcatS(g(a), g(b))
         case IfElseE(c, t, e) => IfElseE(g(c), g(t), g(e))
         case ValueBlock(ps, v) => ValueBlock(ps map f, g(v))

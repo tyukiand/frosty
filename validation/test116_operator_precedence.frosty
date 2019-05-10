@@ -1,0 +1,7 @@
+/** Anonymous expressions of function type.
+  *
+  * EXPECTED: "Yes"
+  */
+
+/** CROP-HEADER */
+`/sys/out` ! (if 10 * 4 + (-6) / (2 - 5) == 40 + 2 then "Yes" else "No")

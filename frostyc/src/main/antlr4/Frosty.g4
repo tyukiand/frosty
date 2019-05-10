@@ -1,13 +1,12 @@
 grammar Frosty;
 
-entry: nsAst* EOF;
 
 absolutePath: '`' ('/' ID)* '`';
 relativePath: '`' ID ('/' ID)* '`';
 
 importSubsel: 
     ID          # SubselectOne
-  | ID '=>' '_' # IgnoreOne
+  | ID '=>' '*' # IgnoreOne
   | '*'         # SubselectRest
   | ID '=>' ID  # SubselectRenameOne
   ;
@@ -32,7 +31,9 @@ nsAst:
   | underImport
   ;
 
-underImport: importClause nsAst;
+entry: nsAst* EOF;
+
+underImport: importClause nsAst*;
 pkg: visibilityModifier 'package' '`' ID '`' '{' nsAst* '}';
 decl: visibilityModifier '`' ID '`' ':' typ;
 code: proc;
@@ -54,6 +55,12 @@ proc:
 
   | '()'                                                    # Unit
 
+  | INT                                                     # Int
+  | proc op=(MUL|DIV|REM) proc                              # MulDivRem
+  | proc op=(ADD|SUB) proc                                  # AddSub
+  | proc op=(LE|GR|LEQ|GEQ) proc                            # Comparison
+  | '(' '-' proc ')'                                        # Neg
+
   | TRUE                                                    # True
   | FALSE                                                   # False
   | 'if' proc 'then' proc 'else' proc                       # IfElse
@@ -62,10 +69,6 @@ proc:
   | proc AND proc                                           # And
   | proc OR proc                                            # Or
 
-  | INT                                                     # Int
-  | proc op=(MUL|DIV|REM) proc                              # MulDivRem
-  | proc op=(ADD|SUB) proc                                  # AddSub
-  | '(' '-' proc ')'                                        # Neg
 
   | STR_LIT                                                 # String
   | absolutePath                                            # AbsoluteName
@@ -115,6 +118,10 @@ AND: 'and';
 OR:  'or';
 NOT: 'not';
 EQ: '==';
+GR: '>';
+GEQ: '>=';
+LE: '<';
+LEQ: '<=';
 PUBLIC: 'public';
 PRIVATE: 'private';
 

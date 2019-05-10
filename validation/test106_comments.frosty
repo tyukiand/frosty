@@ -1,0 +1,14 @@
+/** Prints one message. All the other stuff does nothing, because it's comment.
+  *
+  * EXPECTED: "ok\n"
+  */
+
+`/sys/out` ! ("ok\n")
+/** CROP-HEADER */
+
+/** This is a single-line comment */
+
+/** This is a multiline comment.
+  *
+  * Note that the preferred indentation is two spaces.
+  */

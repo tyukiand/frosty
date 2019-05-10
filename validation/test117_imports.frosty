@@ -1,0 +1,31 @@
+/** Packages and imports.
+  *
+  * EXPECTED: "Hello, world!"
+  */
+
+/** CROP-HEADER */
+public package `a` {
+  public package `b` {
+    public `c`: Run[String]
+    contract `c`(msg) { `d`(msg) }
+
+    private `d`: Run[String]
+    contract `d`(msg) { `/sys/out` ! (msg) }
+
+    public `f`: Run[String]
+    contract `f`(msg) { `c`(msg) }
+  }
+
+  /** Import `c` renaming it to `renamed_c`, import `f` as-is. */
+  import `b/{c => renamed_c, *}`
+
+  public `e`: Run[String]
+  contract `e`(msg) { 
+    `renamed_c`(msg) |
+    `f`(msg)
+  }
+}
+
+/** Import everything in package `a/b` */
+import `a/b/*`
+`c`("Hello, world!")

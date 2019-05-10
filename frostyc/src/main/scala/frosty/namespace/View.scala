@@ -15,12 +15,10 @@ case class View(global: Global, local: Local) {
     */
   def importAbs(p: AbsolutePath, sel: ImportSelector): Option[View] = {
     global.resolve(p).flatMap {
-      _ match {
-        case g @ GlobPackage(_, _) => sel.selectFrom(Local.externalView(g)).map {
-          v => this.mapLocal(_ ++ v)
-        }
-        case GlobSymbol(_, _) => None
+      case g @ GlobPackage(_, _) => sel.selectFrom(Local.externalView(g)).map {
+        v => this.mapLocal(_ ++ v)
       }
+      case GlobSymbol(_, _) => None
     }
   }
 
@@ -31,12 +29,10 @@ case class View(global: Global, local: Local) {
     */
   def importRel(p: RelativePath, sel: ImportSelector): Option[View] = {
     local.resolve(p).flatMap {
-      _ match {
-        case g @ GlobPackage(_, _) => sel.selectFrom(Local.externalView(g)).map {
-          v => this.mapLocal(_ ++ v)
-        }
-        case GlobSymbol(_, _) => None
+      case g @ GlobPackage(_, _) => sel.selectFrom(Local.externalView(g)).map {
+        v => this.mapLocal(_ ++ v)
       }
+      case GlobSymbol(_, _) => None
     }
   }
 

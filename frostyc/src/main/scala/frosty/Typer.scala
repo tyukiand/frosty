@@ -259,7 +259,17 @@ object Typer extends Phase[
           }
         }
       }
-      case Not(b) => ???
+      case Not(b) => {
+        b andThen { tb =>
+          val bType = typeOf(tb)
+          bType match {
+            case BooleanType =>
+              typedAst(Not(tb), BooleanType).pure[ValidationErrorsOr]
+            case weirdStuff =>
+              err(pos, s"Boolean `not` not defined for ${weirdStuff}")
+          }
+        }
+      }
       case And(a, b) => {
         (a, b).tupled.andThen { case (ta, tb) => 
           val aType = typeOf(ta)
@@ -274,7 +284,20 @@ object Typer extends Phase[
           }
         }
       }
-      case Or (a, b) => ???
+      case Or (a, b) => {
+        (a, b).tupled.andThen { case (ta, tb) => 
+          val aType = typeOf(ta)
+          val bType = typeOf(tb)
+          (aType, bType) match {
+            case (BooleanType, BooleanType) => {
+              typedAst(Or(ta, tb), BooleanType).pure[ValidationErrorsOr]
+            }
+            case (weirdA, weirdB) => {
+              err(pos, s"Boolean `or` not defined for ${weirdA} ${weirdB}")
+            }
+          }
+        }
+      }
       case Eq (a, b) => {
         (a, b).tupled.andThen { case (ta, tb) =>
           val aType = typeOf(ta)
@@ -398,6 +421,62 @@ object Typer extends Phase[
               pos,
               s"Operation unary-`-` not defined for -$aType"
             ))
+        }
+      }
+      case Le(a, b) => {
+        (a, b).tupled.andThen{ case (ta, tb) =>
+          val aType = typeOf(ta)
+          val bType = typeOf(tb)
+          (aType, bType) match {
+            case (IntType, IntType) =>
+              typedAst(Le(ta, tb), BooleanType).pure[ValidationErrorsOr]
+            case sthElse => err(
+              pos,
+              s"Operation `<` not defined for $aType < $bType"
+            )
+          }
+        }
+      }
+      case Leq(a, b) => {
+        (a, b).tupled.andThen{ case (ta, tb) =>
+          val aType = typeOf(ta)
+          val bType = typeOf(tb)
+          (aType, bType) match {
+            case (IntType, IntType) =>
+              typedAst(Leq(ta, tb), BooleanType).pure[ValidationErrorsOr]
+            case sthElse => err(
+              pos,
+              s"Operation `<=` not defined for $aType <= $bType"
+            )
+          }
+        }
+      }
+      case Geq(a, b) => {
+        (a, b).tupled.andThen{ case (ta, tb) =>
+          val aType = typeOf(ta)
+          val bType = typeOf(tb)
+          (aType, bType) match {
+            case (IntType, IntType) =>
+              typedAst(Geq(ta, tb), BooleanType).pure[ValidationErrorsOr]
+            case sthElse => err(
+              pos,
+              s"Operation `>=` not defined for $aType >= $bType"
+            )
+          }
+        }
+      }
+      case Gr(a, b) => {
+        (a, b).tupled.andThen{ case (ta, tb) =>
+          val aType = typeOf(ta)
+          val bType = typeOf(tb)
+          (aType, bType) match {
+            case (IntType, IntType) =>
+              typedAst(Gr(ta, tb), BooleanType).pure[ValidationErrorsOr]
+            case sthElse => err(
+              pos,
+              s"Operation `>` not defined for $aType > $bType"
+            )
+          }
         }
       }
       case s @ S(_) => typedAst(s, StringType).pure[ValidationErrorsOr]

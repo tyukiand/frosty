@@ -1,0 +1,13 @@
+/** Channel declaration
+  *
+  * EXPECTED: "Hundred: 100"
+  */
+
+/** CROP-HEADER */
+public `myChannel`: Chan[String, Int, Fun[Int, Int, Int]]
+
+`myChannel` ? (s, i, f) {
+  `/sys/out` ! (s + `/lang/int_to_string`(f(i, 42)))
+}
+
+`myChannel` ! ("Hundred: ", 58, `/lang/add_int`)

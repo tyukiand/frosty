@@ -56,8 +56,7 @@ object SymbolResolver extends Phase[
     globalPackage: GlobPackage
   ): ValidationErrorsOr[(List[SymbolDeclaration], List[Ast])] = {
 
-    /* A little bit of infrastructure and syntactic sugar to make the 
-     * accumulation of declarations and ASTs a little less painful.
+    /* Syntactic sugar for accumulation of declarations and ASTs.
      */
     type Accumulator = (Chain[SymbolDeclaration], Chain[Ast])
 
@@ -112,7 +111,7 @@ object SymbolResolver extends Phase[
           case Some(pkgView) => {
             content
             .map(rec(pkgView, _))
-            .sequence
+            .sequence // TODO: map;sequence = traverse
             .map(_.foldLeft(Monoid[Accumulator].empty)(_ |+| _))
           }
         }
@@ -122,14 +121,23 @@ object SymbolResolver extends Phase[
         case ImportRelAst(path, sel, pos) => {
           view
           .importRel(path, sel)
-          .map(rec(_, content))
+          .map(
+            viewWithImport =>
+              content
+                .traverse(rec(viewWithImport, _))
+                .map(_.foldLeft(Monoid[Accumulator].empty)(_ |+| _))
+          )
           .getOrElse(err(pos, "Failed import: " + i))
         }
 
         case ImportAbsAst(path, sel, pos) => {
           view
           .importAbs(path, sel)
-          .map(rec(_, content))
+          .map(viewWithImport => 
+            content
+              .traverse(rec(viewWithImport, _))
+              .map(_.foldLeft(Monoid[Accumulator].empty)(_ |+| _))
+          )
           .getOrElse(err(pos, "Failed import: " + i))
         }
       }
@@ -144,6 +152,7 @@ object SymbolResolver extends Phase[
       (cd.toList, ca.toList)
     }
   }
+
 
 
   /** Converts list of `Global` namespace elements into
@@ -249,7 +258,13 @@ object SymbolResolver extends Phase[
             case Invalid(errs) => Invalid(errs)
           }
         }
-        case UnderImport(_, c) => helperRec(currPath, c)
+        case UnderImport(_, content) => {
+          content
+            .traverse(helperRec(currPath, _))
+            .map(_.foldLeft(
+              Monoid[Chain[(VisibilityModifier, String, Global)]].empty
+            )(_ |+| _))
+        }
       }
     }
 

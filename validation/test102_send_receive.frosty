@@ -1,0 +1,14 @@
+/** Hello-world with a single send-receive indirection
+  *
+  * EXPECTED: "Hello, World!\n"
+  */
+
+/** CROP-HEADER */
+public `greet`: Chan[String, String]
+
+`greet` ? (how, whom) { 
+  `/sys/out` ! (how + ", " + whom + "!\n")
+}
+
+`greet` ! ("Hello", "World")
+

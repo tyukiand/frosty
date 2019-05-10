@@ -120,6 +120,10 @@ object Translator extends BackendPhase[List[TypedAst], List[Ir]] (
           case Div(a, b) => liftIr(ir.DivI(asValue(a), asValue(b)))
           case Rem(a, b) => liftIr(ir.RemI(asValue(a), asValue(b)))
           case Neg(a) => liftIr(ir.NegI(asValue(a)))
+          case Leq(a, b) => liftIr(ir.LeqI(asValue(a), asValue(b)))
+          case Le(a, b) => liftIr(ir.LeI(asValue(a), asValue(b)))
+          case Geq(a, b) => liftIr(ir.GeqI(asValue(a), asValue(b)))
+          case Gr(a, b) => liftIr(ir.GrI(asValue(a), asValue(b)))
           case S(s) => liftIr(ir.S(s))
           case Freeze(p) => liftIr(ir.Freeze(asProc(p)))
           case IfElse(cond, t, e) =>

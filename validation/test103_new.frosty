@@ -1,0 +1,16 @@
+/** Hello-world with a single send-receive indirection, using `new` operator
+  * and a temporary channel.
+  *
+  * EXPECTED: "Hello, World!\n"
+  */
+
+/** CROP-HEADER */
+new temp: Chan[String, String] {
+
+  temp ? (how, whom) { 
+    `/sys/out` ! (how + ", " + whom + "!\n")
+  } |
+  temp ! ("Hello", "World")
+
+}
+

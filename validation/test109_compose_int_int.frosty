@@ -1,0 +1,23 @@
+/** Higher order functions.
+  *
+  * EXPECTED: "100\n"
+  */
+
+/** CROP-HEADER */
+
+/** Composes two functions. */
+public `compose`: Fun[Fun[Int, Int], Fun[Int, Int], Fun[Int, Int]]
+function `compose`(f, g) = new h: Fun[Int, Int] {
+  function h(x) = f(g(x)) |
+  h 
+}
+
+/** Defines two functions, composes them, applies them to number 9. */
+new
+  incr: Fun[Int, Int],
+  square: Fun[Int, Int]
+{
+  function incr(x) = x + 1 |
+  function square(x) = x * x |
+  `/sys/out` ! (`/lang/int_to_string`(`compose`(square, incr)(9)))
+}

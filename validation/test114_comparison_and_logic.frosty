@@ -1,0 +1,20 @@
+/** Contract declaration
+  *
+  * EXPECTED: "Yes"
+  */
+
+/** CROP-HEADER */
+`/sys/out` ! (
+  if 
+    (5 > 3) and
+    (5 >= 2) and
+    (2 < 3) and
+    (3 <= 3) and
+    (() == ()) and
+    ("a" == "a") and
+    (42 == 42) and
+    (false == false) and
+    ((not false) or false) and true
+  then "Yes"
+  else "No"
+)
